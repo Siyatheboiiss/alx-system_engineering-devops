@@ -1,0 +1,9 @@
+# ~/.ssh/config
+
+# SSH configuration for connecting to myserver using a specific private key
+Host myserver
+    HostName 98.98.98.98  # Replace with your server's IP
+    User ubuntu
+    IdentityFile ~/.ssh/school
+    PreferredAuthentications publickey
+    PasswordAuthentication no
