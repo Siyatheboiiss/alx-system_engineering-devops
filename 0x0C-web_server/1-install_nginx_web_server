@@ -17,12 +17,34 @@ server {
 }
 EOL
 
-# Ensure Nginx is configured correctly and reload
+# Check if the Nginx configuration is valid
+nginx -t
+
+# Restart Nginx (without using systemctl)
 nginx -s reload
 
 # Confirm Nginx is running and listening on port 80
-if ! netstat -tuln | grep ':80'; then
-    echo "Nginx is not listening on port 80."
-else
+if netstat -tuln | grep ':80'; then
     echo "Nginx installed and listening on port 80."
+else
+    echo "Nginx is not listening on port 80."
+    exit 1
+fi
+
+# Check if the page returns "Hello World!"
+HTTP_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" localhost)
+if [ "$HTTP_RESPONSE" -eq 200 ]; then
+    echo "HTTP Status: 200"
+else
+    echo "Expected HTTP Status: 200, but got: $HTTP_RESPONSE"
+    exit 1
+fi
+
+# Verify the content of the page
+PAGE_CONTENT=$(curl -s localhost)
+if [[ "$PAGE_CONTENT" == "Hello World!" ]]; then
+    echo "Page contains 'Hello World!'"
+else
+    echo "Page content does not match. Got: '$PAGE_CONTENT'"
+    exit 1
 fi
