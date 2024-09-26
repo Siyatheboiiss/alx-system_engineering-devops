@@ -1,2 +1,3 @@
 #!/usr/bin/env bash
+# This file connects using the ssh command
 ssh -i ~/.ssh/school ubuntu@server01
