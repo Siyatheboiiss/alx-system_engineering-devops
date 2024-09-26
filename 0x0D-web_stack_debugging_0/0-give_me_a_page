@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
+# Should start apache and print an error if it fails to do so
 apt-get update
 apt-get install -y apache2
 echo "Hello Holberton" > /var/www/html/index.html
 service apache2 start
+
+if service apache2 status | grep -q 'running'; then
+    echo '["apache2 is running"]'
+else
+    echo '["apache2 is not running"]'
+fi
