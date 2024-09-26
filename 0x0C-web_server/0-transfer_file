@@ -1,28 +1,22 @@
 #!/usr/bin/env bash
-# Update package list and install nginx
-apt-get update -y
-apt-get install nginx -y
+# Check for the correct number of arguments
+if [ "$#" -ne 4 ]; then
+    echo "Usage: $0 PATH_TO_FILE IP USERNAME PATH_TO_SSH_KEY"
+    exit 1
+fi
 
-# Create a simple HTML page that contains "Hello World!"
-echo "Hello World!" > /var/www/html/index.html
+# Assign parameters to variables
+FILE_PATH=$1
+SERVER_IP=$2
+USERNAME=$3
+SSH_KEY=$4
 
-# Configure Nginx to serve the page
-cat <<EOL > /etc/nginx/sites-available/default
-server {
-    listen 80;
-    location / {
-        root /var/www/html;
-        index index.html;
-    }
-}
-EOL
+# Execute the scp command with strict host key checking disabled
+scp -o StrictHostKeyChecking=no -i "$SSH_KEY" "$FILE_PATH" "$USERNAME@$SERVER_IP:~/"
 
-# Ensure Nginx is configured correctly and reload
-nginx -s reload
-
-# Confirm Nginx is running and listening on port 80
-if ! netstat -tuln | grep ':80'; then
-    echo "Nginx is not listening on port 80."
+# Check if the scp command was successful
+if [ $? -eq 0 ]; then
+    echo "File transferred successfully."
 else
-    echo "Nginx installed and listening on port 80."
+    echo "File transfer failed."
 fi

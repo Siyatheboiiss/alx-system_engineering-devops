@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Update package list and install nginx
+apt-get update -y
+apt-get install nginx -y
+
+# Create a simple HTML page that contains "Hello World!"
+echo "Hello World!" > /var/www/html/index.html
+
+# Configure Nginx to serve the page
+cat <<EOL > /etc/nginx/sites-available/default
+server {
+    listen 80;
+    location / {
+        root /var/www/html;
+        index index.html;
+    }
+}
+EOL
+
+# Ensure Nginx is configured correctly and reload
+nginx -s reload
+
+# Confirm Nginx is running and listening on port 80
+if ! netstat -tuln | grep ':80'; then
+    echo "Nginx is not listening on port 80."
+else
+    echo "Nginx installed and listening on port 80."
+fi
