@@ -1,50 +1,6 @@
 #!/usr/bin/env bash
-# Update package list and install nginx
-apt-get update -y
-apt-get install nginx -y
-
-# Create a simple HTML page that contains "Hello World!"
-echo "Hello World!" > /var/www/html/index.html
-
-# Configure Nginx to serve the page
-cat <<EOL > /etc/nginx/sites-available/default
-server {
-    listen 80;
-    location / {
-        root /var/www/html;
-        index index.html;
-    }
-}
-EOL
-
-# Check if the Nginx configuration is valid
-nginx -t
-
-# Restart Nginx (without using systemctl)
-nginx -s reload
-
-# Confirm Nginx is running and listening on port 80
-if netstat -tuln | grep ':80'; then
-    echo "Nginx installed and listening on port 80."
-else
-    echo "Nginx is not listening on port 80."
-    exit 1
-fi
-
-# Check if the page returns "Hello World!"
-HTTP_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" localhost)
-if [ "$HTTP_RESPONSE" -eq 200 ]; then
-    echo "HTTP Status: 200"
-else
-    echo "Expected HTTP Status: 200, but got: $HTTP_RESPONSE"
-    exit 1
-fi
-
-# Verify the content of the page
-PAGE_CONTENT=$(curl -s localhost)
-if [[ "$PAGE_CONTENT" == "Hello World!" ]]; then
-    echo "Page contains 'Hello World!'"
-else
-    echo "Page content does not match. Got: '$PAGE_CONTENT'"
-    exit 1
-fi
+# Script that installs Nginx server
+apt-get -y update
+apt-get -y install nginx
+echo "Hello World!" > /var/www/html/index.nginx-debian.html
+service nginx start
