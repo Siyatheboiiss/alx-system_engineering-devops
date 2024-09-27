@@ -1,2 +1,2 @@
 #!/bin/bash
-ls -1 --ignore-backups | grep '\.html$' | xargs -I {} cp -u {} ../{}
+cp -nu *.html ..
